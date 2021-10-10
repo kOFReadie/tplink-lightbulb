@@ -4,27 +4,11 @@
 import dgram = require('dgram');
 import EventEmitter = require('events');
 
-const OldFormat_APName = "smartlife.iot.common.softaponboarding";
-const OldFormat_LightingServiceName = "smartlife.iot.smartbulb.lightingservice";
-const OldFormat_SystemName = "smartlife.iot.common.system";
-const OldFormat_ScheduleName = "smartlife.iot.common.schedule";
-const OldFormat_CloudName = "smartlife.iot.common.cloud";
-
-function _extends(target: any, ...args: any[])
-{
-    for (var i = 1; i < args.length; i++)
-    {
-        var source = args[i];
-        for (var key in source)
-        {
-            if (Object.prototype.hasOwnProperty.call(source, key))
-            {
-                target[key] = source[key];
-            }
-        }
-    }
-    return target;
-}
+export const OldFormat_APName = "smartlife.iot.common.softaponboarding";
+export const OldFormat_LightingServiceName = "smartlife.iot.smartbulb.lightingservice";
+export const OldFormat_SystemName = "smartlife.iot.common.system";
+export const OldFormat_ScheduleName = "smartlife.iot.common.schedule";
+export const OldFormat_CloudName = "smartlife.iot.common.cloud";
 
 export class TPLSmartDevice
 {
@@ -241,17 +225,23 @@ export class TPLSmartDevice
         }
         else
         {
-            const data: IOldFormat =
+            var data: IOldFormat =
             {
                 [OldFormat_LightingServiceName]:
                 {
-                    transition_light_state: _extends({
+                    transition_light_state:
+                    {
                         ignore_default: 1,
                         on_off: powerState ? 1 : 0,
                         transition_period: transition
-                    }, options)
+                    }
                 }
             };
+            for (const key of Object.keys(options))
+            {
+                data[OldFormat_LightingServiceName]!.transition_light_state![key] = (options as any)[key];
+            }
+
             const r = await this.Send<IOldFormat>(data)
                 .catch(err => { throw err; });
             if (r != null && r[OldFormat_LightingServiceName] != null && r[OldFormat_LightingServiceName]!.transition_light_state != null)
@@ -434,13 +424,13 @@ export class TPLSmartDevice
 //#region Interfaces
 //I need a full response with every data type and object avaliable so I know what types to put below and not have all of them nullable.
 //#region Networking
-interface IGetScanInfo
+export interface IGetScanInfo
 {
     refresh?: number,
     ap_list?: object
 }
 
-interface ISetSTAInfo
+export interface ISetSTAInfo
 {
     ssid?: string,
     password?: string,
@@ -449,7 +439,7 @@ interface ISetSTAInfo
     err_code?: number
 }
 
-interface INetRoot
+export interface INetRoot
 {
     get_scaninfo?: IGetScanInfo,
     set_stainfo?: ISetSTAInfo
@@ -457,28 +447,28 @@ interface INetRoot
 //#endregion
 
 //#region System
-interface IGetSYSInfo
+export interface IGetSYSInfo
 {
     relay_state?: number,
     dev_name?: string,
 }
 
-interface ISetRelayState
+export interface ISetRelayState
 {
     state: 0 | 1
 }
 
-interface ILedState
+export interface ILedState
 {
     off: 0 | 1
 }
 
-interface ISetDevAlias
+export interface ISetDevAlias
 {
     alias: string
 }
 
-interface ISystemNew
+export interface ISystemNew
 {
     get_sysinfo?: IGetSYSInfo,
     set_relay_state?: ISetRelayState,
@@ -486,7 +476,7 @@ interface ISystemNew
     set_dev_alias?: ISetDevAlias
 }
 
-interface ISystemOld
+export interface ISystemOld
 {
     set_dev_alias?: ISetDevAlias,
     reboot?:
@@ -495,25 +485,25 @@ interface ISystemOld
     }
 }
 
-interface ISchedule
+export interface ISchedule
 {
     get_daystat?: IGetDayStat,
     get_rules?: object
 }
 
-interface IGetDayStat
+export interface IGetDayStat
 {
     month: number,
     year: number,
 }
 
-interface ILightingService
+export interface ILightingService
 {
     transition_light_state?: any,
     get_light_details?: object,
 }
 
-interface IPowerOptions
+export interface IPowerOptions
 {
     hue?: number,
     saturation?: number,
@@ -523,20 +513,20 @@ interface IPowerOptions
 //#endregion
 
 //#region Cloud
-interface ICloud
+export interface ICloud
 {
     get_info: object,
 }
 //#endregion
 
 //#region Formats
-interface INewFormat
+export interface INewFormat
 {
     netif?: INetRoot,
     system?: ISystemNew
 }
 
-interface IOldFormat
+export interface IOldFormat
 {
     [OldFormat_APName]?: INetRoot,
     [OldFormat_LightingServiceName]?: ILightingService
@@ -547,7 +537,7 @@ interface IOldFormat
 //#endregion
 
 //#region Responses
-interface IInfoResponse
+export interface IInfoResponse
 {
     sw_ver: string;
     hw_ver: string;
@@ -574,7 +564,7 @@ interface IInfoResponse
     err_code: number;
 }
 
-interface IPreferredstate
+export interface IPreferredstate
 {
     index: number;
     hue: number;
@@ -583,7 +573,7 @@ interface IPreferredstate
     brightness: number;
 }
 
-interface ILightstate
+export interface ILightstate
 {
     on_off: number;
     mode: string;
@@ -593,7 +583,7 @@ interface ILightstate
     brightness: number;
 }
 
-interface ICtrlprotocols
+export interface ICtrlprotocols
 {
     name: string;
     version: string;
