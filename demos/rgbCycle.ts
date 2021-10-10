@@ -29,7 +29,9 @@ if (process.argv.indexOf("--ip") != -1 && process.argv.indexOf("--ip") + 1 != -1
 
 if (_ip != undefined)
 {
-    BeginRGBCycle(new TPLSmartDevice(_ip, 9999), _resolution, _cycleTime);
+    const light = new TPLSmartDevice(_ip, 9999);
+    light.Info().then(data => { console.log(data); });
+    BeginRGBCycle(light, _resolution, _cycleTime);
 }
 else
 {
@@ -59,7 +61,8 @@ async function BeginRGBCycle(light: TPLSmartDevice, resolution: number = 6, cycl
         for (let i = 0; i < resolution; i+= step)
         {
             SetLightColourFromHex(light, i, 100, 50, sleepTime)
-            await Sleep(sleepTime);
+            //Add extra delay to help prevent the light from flickering.
+            await Sleep(sleepTime + 10);
         }
     }
 }
@@ -70,7 +73,8 @@ async function SetLightColourFromHex(light: TPLSmartDevice, h: number, s: number
     {
         hue: h,
         saturation: s,
-        brightness: l
+        brightness: l,
+        color_temp: 0
     });
 
     return response == null;
