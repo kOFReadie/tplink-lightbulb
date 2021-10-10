@@ -1,3 +1,6 @@
+//I could've tried to modify d.ts files but I was having some issues so I copied and modified the original JS file.
+//Besides, TS > JS :).
+
 import dgram = require('dgram');
 import EventEmitter = require('events');
 
