@@ -1,0 +1,22 @@
+{
+  "name": "tplink-lightbulb-ts",
+  "version": "1.0.0",
+  "description": "A Typescript implemtation of tplink-lightbulb",
+  "scripts": {
+    "watch": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kOFReadie/tplink-lightbulb-ts.git"
+  },
+  "author": "konsumer/kofreadie",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kOFReadie/tplink-lightbulb-ts/issues"
+  },
+  "homepage": "https://github.com/kOFReadie/tplink-lightbulb-ts#readme",
+  "dependencies": {
+    "@types/node": "^16.10.3",
+    "nodemon": "^2.0.13"
+  }
+}
