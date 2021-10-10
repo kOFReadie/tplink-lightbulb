@@ -60,9 +60,10 @@ async function BeginRGBCycle(light: TPLSmartDevice, resolution: number = 6, cycl
     {
         for (let i = 0; i < resolution; i+= step)
         {
-            SetLightColourFromHex(light, i, 100, 50, sleepTime)
-            //Add extra delay to help prevent the light from flickering.
-            await Sleep(sleepTime + 10);
+            //Wait for the bulb to respond to prevent the loop from becoming out of sync resulting in the bulb sometimes jumping between colours.
+            //This will cause the look to run off course and not be exactly every x seconds but its good enough for this demo.
+            await SetLightColourFromHex(light, i, 100, 50, sleepTime);
+            await Sleep(sleepTime);
         }
     }
 }
