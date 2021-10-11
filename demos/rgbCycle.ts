@@ -1,4 +1,4 @@
-import { TPLSmartDevice } from "../src/tplink-lightbulb";
+import { TPLSmartDevice, IInfoResponse } from "../src/tplink-lightbulb";
 
 console.log("RGB Cycle Demo");
 
@@ -58,27 +58,34 @@ async function BeginRGBCycle(light: TPLSmartDevice, resolution: number = 6, cycl
 
     while (true)
     {
-        for (let i = 0; i < resolution; i+= step)
+        for (let i = 0; i < resolution; /*i+= step*/)
         {
-            //Wait for the bulb to respond to prevent the loop from becoming out of sync resulting in the bulb sometimes jumping between colours.
-            //This will cause the look to run off course and not be exactly every x seconds but its good enough for this demo.
-            await SetLightColourFromHSL(light, i, 100, 50, sleepTime);
-            await Sleep(sleepTime);
+            try
+            {
+                //Wait for the bulb to respond to prevent the loop from becoming out of sync resulting in the bulb sometimes jumping between colours.
+                //This will cause the look to run off course and not be exactly every x seconds but its good enough for this demo.
+                console.log(await SetLightColourFromHSL(light, i, 100, 50, sleepTime));
+                await Sleep(sleepTime);
+                i+= step;
+            }
+            catch (ex)
+            {
+                console.log(ex);
+                //Retry and don't increment the counter.
+            }
         }
     }
 }
 
-async function SetLightColourFromHSL(light: TPLSmartDevice, h: number, s: number, l: number, transitionTime = 0): Promise<boolean>
+async function SetLightColourFromHSL(light: TPLSmartDevice, h: number, s: number, l: number, transitionTime = 0): Promise<IInfoResponse | null>
 {
-    const response = await light.Power(true, transitionTime,
+    return light.Power(true, transitionTime,
     {
         hue: h,
         saturation: s,
         brightness: l,
         color_temp: 0
     });
-
-    return response == null;
 }
 
 //https://stackoverflow.com/questions/951021/what-is-the-javascript-version-of-sleep

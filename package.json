@@ -4,7 +4,9 @@
   "description": "A Typescript implemtation of tplink-lightbulb",
   "scripts": {
     "demo:rgb-cycle:watch": "nodemon ./demos/rgbCycle.ts",
-    "demo:rgb-cycle-params:watch": "nodemon ./demos/rgbCycle.ts --ip 192.168.137.53 --resolution 3 --cycleTime 5000"
+    "demo:rgb-cycle-params:watch": "nodemon ./demos/rgbCycle.ts --ip 192.168.137.130 --resolution 3 --cycleTime 5000",
+    "demo:strobe:watch": "nodemon ./demos/strobe.ts",
+    "demo:strobe-params:watch": "nodemon ./demos/strobe.ts --ip 192.168.137.130 --cycleTime 20"
   },
   "repository": {
     "type": "git",
