@@ -62,13 +62,13 @@ async function BeginRGBCycle(light: TPLSmartDevice, resolution: number = 6, cycl
         {
             //Wait for the bulb to respond to prevent the loop from becoming out of sync resulting in the bulb sometimes jumping between colours.
             //This will cause the look to run off course and not be exactly every x seconds but its good enough for this demo.
-            await SetLightColourFromHex(light, i, 100, 50, sleepTime);
+            await SetLightColourFromHSL(light, i, 100, 50, sleepTime);
             await Sleep(sleepTime);
         }
     }
 }
 
-async function SetLightColourFromHex(light: TPLSmartDevice, h: number, s: number, l: number, transitionTime = 0): Promise<boolean>
+async function SetLightColourFromHSL(light: TPLSmartDevice, h: number, s: number, l: number, transitionTime = 0): Promise<boolean>
 {
     const response = await light.Power(true, transitionTime,
     {
