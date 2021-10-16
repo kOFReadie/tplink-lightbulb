@@ -22,7 +22,7 @@ else { _cycleTime = 10; }
 if (_ip != undefined)
 {
     const light = new TPLSmartDevice(_ip, 9999);
-    light.Info().then(data => { console.log(data); });
+    light.SysInfo().then(data => { console.log(data); });
     BeginStrobe(light, _cycleTime);
 }
 else

@@ -22,7 +22,7 @@ export class TPLSmartDevice
 
     constructor (
         ip: string,
-        port: number,
+        port: number = 9999,
         _info?: dgram.RemoteInfo,
         _sysInfo?: any,
         host?: string,
@@ -39,7 +39,7 @@ export class TPLSmartDevice
         this.deviceID = deviceID;
     }
 
-    public static Scan(filter?: string, broadcast = "255.255.255.255"): { emitter: EventEmitter, client: dgram.Socket }
+    public static Scan(filter?: string, broadcast = "255.255.255.255"): IScanObject
     {
         const emitter = new EventEmitter();
         const client = dgram.createSocket({ type: "udp4", reuseAddr: true });
@@ -71,6 +71,11 @@ export class TPLSmartDevice
         });
 
         return { emitter: emitter, client: client };
+    }
+
+    public GetIP(): string
+    {
+        return this.ip;
     }
 
     public Send<T>(msg: object): Promise<T>
@@ -192,7 +197,7 @@ export class TPLSmartDevice
         return false;
     }
 
-    public async Info(): Promise<IGetSYSInfo | null>
+    public async SysInfo(): Promise<IGetSYSInfo | null>
     {
         const data: INewFormat = { system: { get_sysinfo: {} } };
         const r = await this.Send<INewFormat>(data)
@@ -204,9 +209,21 @@ export class TPLSmartDevice
         return null;
     }
 
-    public async Power(powerState: boolean, transition: number = 0, options: IPowerOptions = {}): Promise<IInfoResponse | null>
+    public async Info(): Promise<IInfoResponse | null>
     {
-        const info = await this.Info()
+        const data: INewFormat = { system: { get_sysinfo: {} } };
+        const r = await this.Send<IInfoResponse>(data)
+            .catch(err => { throw err; });
+        if (r != null)
+        {
+            return r;
+        }
+        return null;
+    }
+
+    public async Power(powerState: boolean, transition: number = 0, options: IPowerOptions = {}): Promise<ILightstate | null>
+    {
+        const info = await this.SysInfo()
             .catch(err => { throw err; });
         if (info?.relay_state != undefined)
         {
@@ -220,7 +237,7 @@ export class TPLSmartDevice
                     }
                 }
             };
-            return this.Send<IInfoResponse>(data)
+            return this.Send<ILightstate>(data)
                 .catch(err => { throw err; });
         }
         else
@@ -271,7 +288,7 @@ export class TPLSmartDevice
 
     public async Name(newAlias: string)
     {
-        const info = await this.Info()
+        const info = await this.SysInfo()
             .catch(err => { throw err; });
         
         if (info == null || info.dev_name == undefined)
@@ -369,7 +386,7 @@ export class TPLSmartDevice
         return null;
     }
 
-    public Details(): Promise<any>
+    public Details(): Promise<ILightingService>
     {
         const data: IOldFormat =
         {
@@ -378,7 +395,7 @@ export class TPLSmartDevice
                 get_light_details: {}
             }
         };
-        return this.Send<IOldFormat>(data)
+        return this.Send<ILightingService>(data)
             .catch(err => { throw err; });
     }
 
@@ -423,6 +440,12 @@ export class TPLSmartDevice
 
 //#region Interfaces
 //I need a full response with every data type and object avaliable so I know what types to put below and not have all of them nullable.
+export interface IScanObject
+{
+    emitter: EventEmitter,
+    client: dgram.Socket
+}
+
 //#region Networking
 export interface IGetScanInfo
 {
