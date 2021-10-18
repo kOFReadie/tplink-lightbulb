@@ -1,4 +1,4 @@
-import { TPLSmartDevice, IInfoResponse } from "../src/tplink-lightbulb";
+import { TPLSmartDevice, ILightstate } from "../src/tplink-lightbulb";
 
 console.log("RGB Cycle Demo");
 
@@ -77,7 +77,7 @@ async function BeginRGBCycle(light: TPLSmartDevice, resolution: number = 6, cycl
     }
 }
 
-async function SetLightColourFromHSL(light: TPLSmartDevice, h: number, s: number, l: number, transitionTime = 0): Promise<IInfoResponse | null>
+async function SetLightColourFromHSL(light: TPLSmartDevice, h: number, s: number, l: number, transitionTime = 0): Promise<ILightstate | null>
 {
     return light.Power(true, transitionTime,
     {
